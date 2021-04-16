@@ -28,11 +28,11 @@ const validateString = (field, required=false, minLength=6, maxLength=200, patte
 const validateInteger = (field, required=false, maxLength=Number.MAX_VALUE, minLength=Number.MIN_VALUE)=>{
     if(basicFieldValidation(field, 'number', required)) return true;
 
-    if(field <= minLength){
+    if(field < minLength){
         throw new Error(`Field underpass ${minLength}`);
     }
 
-    if(field >= maxLength){
+    if(field > maxLength){
         throw new Error(`Field overpass ${maxLength}`);
     }
 

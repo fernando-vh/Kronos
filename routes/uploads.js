@@ -24,7 +24,7 @@ router.get('/:userId/image', [
 
 router.post('/songs', [
     validateJWT,
-    check('emotionCode').   custom((v) => validateInteger(v, true)),
+    check('emotionCode').   custom((v) => validateInteger(v, true, 10, 0)),
     check('title').         custom((v) => validateString(v, false, 1, 70)),
     check('emotionCode').   custom(validateEmotionCode),
     validateFields
@@ -37,7 +37,6 @@ router.delete('/songs/:id', [
 ], deleteSong);
 
 router.get('/songs/:id', [
-    validateJWT,
     check('id').            custom(songExists),
     validateFields
 ], getSongFile);
