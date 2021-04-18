@@ -2,9 +2,20 @@ const axios = require('axios');
 const { randomInt } = require('crypto');
 
 const fs = require('fs');
+const types = require('../models/types/types');
 
 const createNewSongHades = async (emotion) => {
-    const testFolder = 'C:/Users/HavyM/Music/Musica Varia';
+    
+    let folder;
+    
+    switch(emotion){
+        case types.EMOTION.HAPPY:   folder = 'HAPPY'; break;
+        case types.EMOTION.ALARMED:   folder = 'ALARMED'; break;
+        case types.EMOTION.SAD:   folder = 'SAD'; break;
+        case types.EMOTION.TIRED:   folder = 'TIRED'; break;
+    }
+    
+    const testFolder = `C:/Users/HavyM/Music/Musica Varia/${folder}`;
 
     const files = fs.readdirSync(testFolder);
     const songs = files.filter(v => v.includes(".mp3"));

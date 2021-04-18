@@ -100,7 +100,7 @@ const deleteSong = async (req, res) => {
             fs.unlinkSync(songPath);
         }
 
-        return res.status(201).json({
+        return res.status(200).json({
             msg:'success',
             songId
         })
