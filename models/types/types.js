@@ -25,6 +25,10 @@ const types = {
         HAPPY: 1,
         TIRED: 2,
         SAD: 3
+    },
+    SEARCH_COMPONENTS:{
+        SONGS:'song',
+        USERS:'user'
     }
 }
 

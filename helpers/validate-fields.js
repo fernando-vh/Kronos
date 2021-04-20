@@ -1,3 +1,6 @@
+const types = require("../models/types/types");
+const { obj2StringPretty } = require("./util");
+
 const basicFieldValidation = (field, type, required=false)=>{
     if(!field && typeof field === "undefined"){
         if(!required) return true;
@@ -57,10 +60,23 @@ const validateFileType = (field, required=false, minLength=6, maxLength=200, pat
     return true;
 }
 
+const validateComponentType = (field, required=false, minLength=6, maxLength=200, pattern) => {
+    validateString(field, required, minLength, maxLength, pattern);
+
+    const validTypes = [types.SEARCH_COMPONENTS.SONGS, types.SEARCH_COMPONENTS.USERS];
+
+    if(!validTypes.includes(field)){
+        throw new Error(`Invalid type, use: [${validTypes}] instead`);
+    }
+
+    return true;
+}
+
 module.exports = {
     validateInteger,
     validateString,
     validateBoolean,
     basicFieldValidation,
-    validateFileType
+    validateFileType,
+    validateComponentType
 }

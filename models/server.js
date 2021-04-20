@@ -13,7 +13,8 @@ class Server {
             user: '/api/users',
             auth: '/api/auth',
             uploads: '/api/uploads',
-            song: '/api/songs'
+            song: '/api/songs',
+            search: '/api/search'
         };
 
         this.dbConnection();
@@ -61,6 +62,7 @@ class Server {
         this.app.use(this.paths.auth, require('../routes/auth'));
         this.app.use(this.paths.uploads, require('../routes/uploads'));
         this.app.use(this.paths.song, require('../routes/song'));
+        this.app.use(this.paths.search, require('../routes/search'));
     }
 
     listen(){
