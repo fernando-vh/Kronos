@@ -27,8 +27,8 @@ const types = {
         SAD: 3
     },
     SEARCH_COMPONENTS:{
-        SONGS:'song',
-        USERS:'user'
+        SONGS:'songs',
+        USERS:'users'
     }
 }
 

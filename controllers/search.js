@@ -27,7 +27,8 @@ const searchElements = async (req, res) => {
         return res.status(200).json({
             msg:'success',
             total:result.count,
-            result:result.rows
+            result:result.rows,
+            component
         })
 
     }catch(e){
