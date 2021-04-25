@@ -1,6 +1,8 @@
 const path = require('path');
 const fs = require('fs');
 
+const { v4: uuidv4 } = require('uuid');
+
 const { uploadFile, uploadBinFile, extractMP3Data } = require('../helpers/file-operations');
 const { validatePermission } = require('../helpers/validate-permission');
 const User = require('../models/dbModels/user');
@@ -141,10 +143,46 @@ const getSongFile = async (req, res) => {
     }
 }
 
+const copySong = async (req, res) => {
+    try{
+
+        const {id} = req.params;
+
+        const fileName = uuidv4() + '.mp3';
+
+        fs.copyFileSync(
+            `${types.FILE_DIRS.SONGS_DIRNAME}/${id}.mp3`,
+            `${types.FILE_DIRS.SONGS_DIRNAME}/${fileName}`);
+
+        const song = await Song.findByPk(id);
+
+        const copySong = await Song.create(
+            {  
+                id: fileName.split('.')[0],
+                title: song.title,
+                duration: song.duration,
+                size: song.size,
+                user_id: req.user.id,
+                emotion_code: song.emotion_code
+            }
+        );
+
+        return res.status(201).json({
+            msg:'success',
+            copySong
+        });
+
+    }catch(e){
+        console.log(e);
+        return res.status(500).json({msg:'Something went wrong'});
+    }
+}
+
 module.exports = {
     loadUserImage,
     getUserImage,
     loadSong,
     deleteSong,
-    getSongFile
+    getSongFile,
+    copySong
 }

@@ -1,7 +1,7 @@
 const { Router } = require("express");
 const { check } = require("express-validator");
 
-const { loadUserImage, getUserImage, loadSong, deleteSong, getSongFile } = require("../controllers/uploads");
+const { loadUserImage, getUserImage, loadSong, deleteSong, getSongFile, copySong } = require("../controllers/uploads");
 const { validateString, validateInteger } = require("../helpers/validate-fields");
 const { userExists, validateEmotionCode, songExists } = require("../helpers/validate-to-db");
 const { validateFields } = require("../middlewares/validate-fields");
@@ -29,6 +29,12 @@ router.post('/songs', [
     check('emotionCode').   custom(validateEmotionCode),
     validateFields
 ], loadSong);
+
+router.post('/songs/:id/clone', [
+    validateJWT,
+    check('id').            custom(songExists),
+    validateFields
+], copySong);
 
 router.delete('/songs/:id', [
     validateJWT,
