@@ -4,6 +4,9 @@ const cors = require('cors');
 const fileUpload = require('express-fileupload');
 const db = require('../db/connection');
 
+const passport = require('passport');
+const FacebookTokenStrategy = require('passport-facebook-token');
+
 class Server {
     constructor(){
         this.app = express();
@@ -55,6 +58,24 @@ class Server {
             }
             next();
         });
+
+        //External auth
+        this.passportStrategies();
+
+        this.app.use(passport.initialize());
+    }
+
+    passportStrategies(){
+        passport.use(new FacebookTokenStrategy({
+            clientID: process.env.FB_CLIENT_ID,
+            clientSecret: process.env.FB_CLIENT_SECRET,
+            fbGraphVersion: 'v3.0',
+            enableProof: true,
+            //profileFields: ['id', 'displayName', 'photos', 'email']
+          }, (function(accessToken, refreshToken, profile, done) {
+              return done(null, profile);
+          })
+        ));
     }
 
     routes(){

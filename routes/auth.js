@@ -1,10 +1,12 @@
 const { Router } = require("express");
 const { check } = require("express-validator");
+const passport = require('passport');
 
 const { loginInternal,
         sigInInternal, 
         signInGoogle,
-        checkTokenIntegrity
+        checkTokenIntegrity,
+        siginFacebook
     } = require("../controllers/auth");
 
 const { validateString,
@@ -38,6 +40,9 @@ router.post('/signin',[
 ], sigInInternal);
 
 router.post('/login/google', signInGoogle);
-router.post('/login/facebook',[], );
+
+router.post('/login/facebook',[
+    passport.authenticate('facebook-token', {session:false})
+], siginFacebook);
 
 module.exports = router;

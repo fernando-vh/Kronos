@@ -59,7 +59,7 @@ const sigInInternal = async (req, res) => {
 
 const signInGoogle = async (req, res) =>{
     try{
-        const googletoken = req.header('authorization').split(' ')[1];
+        const googletoken = req.body.access_token;
         
         const googleUser = await googleVerify(googletoken);
         const {email, username, pp_path} = googleUser
@@ -67,7 +67,7 @@ const signInGoogle = async (req, res) =>{
         let user = await User.findOne( { where: { email } } );
 
         if(!user){
-            user = new User.create({ username, email, pp_path, auth_type_id:types.AUTH_TYPE.GOOGLE });
+            user = await User.create({ username, password:'hello:)', email, pp_path, auth_type_id:types.AUTH_TYPE.GOOGLE });
             user = user.toJSON();
         }
 
@@ -88,13 +88,48 @@ const signInGoogle = async (req, res) =>{
     
 }
 
-const checkTokenIntegrity = (req, res) => {
+const siginFacebook = async (req, res) => {
     try{
+
+        const {displayName:username, emails, photos} = req.user;
+    
+        const pp_path = photos[0].value;
+        const email = emails[0].value;
+    
+        let user = await User.findOne( { where: { email } } );
+    
+        if(!user){
+            user = await User.create({ username, password:'hello:)', email, pp_path, auth_type_id:types.AUTH_TYPE.FACEBOOK });
+            user = user.toJSON();
+        }
+    
+        if(user.archived) return res.status(401);
+        
+        const {id, role_id} = user;
+        const token = await generateJWT({id, username, role_id});
+    
         return res.status(200).json({
             msg:'success',
-            user:req.user
+            token
         })
-    }catch{
+
+    } catch(e){
+        console.log(e);
+        return res.status(500).json({msg:'Something went wrong'});
+    }
+}
+
+const checkTokenIntegrity = async (req, res) => {
+    try{
+        const {id, username, role_id} = req.user;
+        const token = await generateJWT({id, username, role_id});
+
+        return res.status(200).json({
+            msg:'success',
+            user:req.user,
+            token
+        })
+    }catch(e){
         console.log(e);
         return res.status(500).json({msg:'Something went wrong'})
     }
@@ -104,5 +139,6 @@ module.exports = {
     loginInternal,
     sigInInternal,
     signInGoogle,
+    siginFacebook,
     checkTokenIntegrity
 }

@@ -10,6 +10,7 @@ const types = require('../models/types/types');
 const { createNewSongHades } = require('../services/hades-service');
 const Song = require('../models/dbModels/song');
 const {getRandomInt} = require('../helpers/util');
+const { response } = require('express');
 
 
 const loadUserImage = async (req, res) => {
@@ -113,14 +114,20 @@ const deleteSong = async (req, res) => {
     }
 }
 
-const getUserImage = async (req, res) => {
+const getUserImage = async (req, res=response) => {
     const {userId:id} = req.params;
 
     try{
         const user = await User.findByPk(id);
-        const filePath = path.join(types.FILE_DIRS.PP_DIRNAME, user.pp_path);
-
-        return res.status(200).sendFile(filePath);
+        
+        if(user.auth_type_id === types.AUTH_TYPE.INTERNAL){
+            return res.status(200).sendFile(
+                path.join(types.FILE_DIRS.PP_DIRNAME, user.pp_path)
+            );
+        }
+        else{
+            return res.status(200).redirect(user.pp_path);
+        }
 
     }catch(e){
         console.log(e);
@@ -169,7 +176,7 @@ const copySong = async (req, res) => {
 
         return res.status(201).json({
             msg:'success',
-            copySong
+            song:copySong
         });
 
     }catch(e){
