@@ -110,20 +110,28 @@ const putSensitiveUser = async (req, res) => {
     try{
 
         const {id} = req.params;
-        let {password} = req.body;
+        const {old_password, new_password} = req.body;
         
         if(!validatePermission(types.PERMISSION_TYPE.BOTH, req.user, id)){
             return res.status(401).json();
         }
 
-        password = bcrypt.hashSync(password, bcrypt.genSaltSync());
+        const newPassword = bcrypt.hashSync(new_password, bcrypt.genSaltSync());
+        const userSchema = await User.findByPk(id);
+        const user = userSchema.toJSON();
 
-        const user = await User.findByPk(id);
-        await user.update({password});
-
-        res.status(201).json({
-            msg:'success'
-        })
+        if(bcrypt.compareSync(old_password, user.password)){
+            await userSchema.update({password:newPassword});
+    
+            return res.status(201).json({
+                msg:'success'
+            })
+        }
+        else{
+            return res.status(400).json({
+                msg:'Incorrect password'
+            });
+        }
 
     }catch(e){
         console.log(e);

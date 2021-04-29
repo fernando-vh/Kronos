@@ -34,7 +34,7 @@ router.get('/:id',[
 router.put('/:id/basic',[
     validateJWT,
     check('username').      custom((v)=>validateString(v, false, 3, 50)),
-    check('description').   custom((v)=>validateString(v, false, 3, 250)),
+    check('description').   custom((v)=>validateString(v, false, 0, 250)),
     check('private_email'). custom((v)=>validateBoolean(v, false)),
     check('id').            custom(userExists),
     validateFields,
@@ -54,9 +54,10 @@ router.put('/:id/role',[
     validateFields,
 ], putChangeRoleUser);
 
-router.put('/:id/sensitive',[
+router.put('/:id/password',[
     validateJWT,
-    check('password').      custom((v)=>validateString(v, true, 6, 200)),
+    check('old_password').  custom((v)=>validateString(v, true, 6, 200)),
+    check('new_password').  custom((v)=>validateString(v, true, 6, 200)),
     check('id').            custom(userExists),
     validateFields,
 ], putSensitiveUser);

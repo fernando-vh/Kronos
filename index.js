@@ -20,7 +20,10 @@ server.listen();
 /*TODOS: 
     -implement ssl certificate: https
 
-    -email verification
+    -handle external image change, at login
+
     -image max size
     -cors implementation
+
+    -email verification?
 */
