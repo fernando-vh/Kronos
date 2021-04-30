@@ -13,6 +13,7 @@ const uploadFile = (files, extensions = [], fileLocation) => {
 
         if(!extensions.includes(extension)){
             reject({status:400, res:`File has an invalid extension: ${extension}, use: ${extensions} insted`});
+            return;
         }
 
         const tempName = uuidv4() + '.' + extension;
