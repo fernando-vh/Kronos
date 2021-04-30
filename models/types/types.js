@@ -29,6 +29,9 @@ const types = {
     SEARCH_COMPONENTS:{
         SONGS:'songs',
         USERS:'users'
+    },
+    RESTRICTIONS:{
+        MAX_IMAGE_SIZE: 225
     }
 }
 

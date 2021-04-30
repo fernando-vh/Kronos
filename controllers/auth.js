@@ -64,14 +64,17 @@ const signInGoogle = async (req, res) =>{
         const googleUser = await googleVerify(googletoken);
         const {email, username, pp_path} = googleUser
 
-        let user = await User.findOne( { where: { email } } );
+        let userSchema = await User.findOne( { where: { email } } );
 
-        if(!user){
-            user = await User.create({ username, password:'hello:)', email, pp_path, auth_type_id:types.AUTH_TYPE.GOOGLE });
-            user = user.toJSON();
+        if(!userSchema){
+            userSchema = await User.create({ username, password:'hello:)', email, pp_path, auth_type_id:types.AUTH_TYPE.GOOGLE });
         }
-
+        const user = user.toJSON();
         if(user.archived) return res.status(401);
+
+        if(user.pp_path !== pp_path){
+            userSchema.update({pp_path})
+        }
         
         const {id, role_id} = user;
         const token = await generateJWT({id, username, role_id});
@@ -96,14 +99,18 @@ const siginFacebook = async (req, res) => {
         const pp_path = photos[0].value;
         const email = emails[0].value;
     
-        let user = await User.findOne( { where: { email } } );
+        let userSchema = await User.findOne( { where: { email } } );
     
-        if(!user){
-            user = await User.create({ username, password:'hello:)', email, pp_path, auth_type_id:types.AUTH_TYPE.FACEBOOK });
-            user = user.toJSON();
+        if(!userSchema){
+            userSchema = await User.create({ username, password:'hello:)', email, pp_path, auth_type_id:types.AUTH_TYPE.FACEBOOK });
         }
-    
+
+        const user = user.toJSON();
         if(user.archived) return res.status(401);
+
+        if(user.pp_path !== pp_path){
+            userSchema.update({pp_path});
+        }
         
         const {id, role_id} = user;
         const token = await generateJWT({id, username, role_id});

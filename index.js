@@ -1,5 +1,4 @@
 const fs = require('fs');
-const path = require('path');
 require('dotenv').config();
 
 const Server = require('./models/server');
@@ -20,10 +19,6 @@ server.listen();
 /*TODOS: 
     -implement ssl certificate: https
 
-    -handle external image change, at login
-
-    -image max size
-    -cors implementation
-
+    -cors implementation? (if the app is running locally this have no sense)
     -email verification?
 */

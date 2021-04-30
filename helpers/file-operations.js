@@ -4,6 +4,8 @@ const path = require('path');
 const mm = require('music-metadata');
 
 const { v4: uuidv4 } = require('uuid');
+const imgSize = require('image-size');
+const types = require("../models/types/types");
 
 const uploadFile = (files, extensions = [], fileLocation) => {
     return new Promise((resolve, reject) => {
@@ -12,16 +14,22 @@ const uploadFile = (files, extensions = [], fileLocation) => {
         const extension = filteredName[filteredName.length-1].toLowerCase();
 
         if(!extensions.includes(extension)){
-            reject({status:400, res:`File has an invalid extension: ${extension}, use: ${extensions} insted`});
-            return;
+            return reject({status:400, res:`File has an invalid extension: ${extension}, use: ${extensions} insted`});
+        }
+
+        const {width, height} = imgSize(file.tempFilePath);
+
+        if(width > types.RESTRICTIONS.MAX_IMAGE_SIZE || 
+            height > types.RESTRICTIONS.MAX_IMAGE_SIZE){
+            return reject({status:400, res:`File has an invalid size must be at least: ${types.RESTRICTIONS.MAX_IMAGE_SIZE}x${types.RESTRICTIONS.MAX_IMAGE_SIZE}`});
         }
 
         const tempName = uuidv4() + '.' + extension;
         const uploadPath = path.join(fileLocation, tempName);
-    
+
         file.mv(uploadPath, (err) => {
             if (err) reject({status:500, res:'Something went wrong'});
-            resolve({status:201, res:tempName});
+            return resolve({status:201, res:tempName});
         });
 
     });
