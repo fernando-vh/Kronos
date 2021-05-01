@@ -51,9 +51,16 @@ const validateEmotionCode = async (emotion=types.EMOTION.SAD) => {
     }
 }
 
-const userExists = async(uid, allowArchive = false)=>{
+const userExistsIncludeArchieve = async(uid)=>{
     const user = await User.findByPk(uid);
-    if(!user && (user.archived && !allowArchive)){
+    if(!user){
+        throw new Error('No valid user ID');
+    }
+}
+
+const userExists = async(uid)=>{
+    const user = await User.findByPk(uid, {raw:true});
+    if(!user || user.archived){
         throw new Error('No valid user ID');
     }
 }
@@ -64,5 +71,6 @@ module.exports = {
     validateAuthType,
     validateEmotionCode,
     userExists,
-    songExists
+    songExists,
+    userExistsIncludeArchieve
 }

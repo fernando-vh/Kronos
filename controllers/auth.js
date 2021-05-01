@@ -10,7 +10,7 @@ const types = require('../models/types/types');
 const loginInternal = async (req, res) => {
     try{
 
-        const {password, email} = req.body;
+        const {password, email, remember} = req.body;
 
         const user = await User.findOne({ where: { email }, raw:true } );
 
@@ -19,7 +19,8 @@ const loginInternal = async (req, res) => {
         }
         
         const {id, username, role_id} = user;
-        const token = await generateJWT({id, username, role_id});
+        const token = await generateJWT({id, username, role_id, remember:!!remember}, 
+            remember? types.RESTRICTIONS.LONG_TOKEN_TIME: types.RESTRICTIONS.TOKEN_TIME);
 
         return res.status(200).json({
             msg:'success',
@@ -59,7 +60,7 @@ const sigInInternal = async (req, res) => {
 
 const signInGoogle = async (req, res) =>{
     try{
-        const googletoken = req.body.access_token;
+        const {access_token:googletoken, remember} = req.body;
         
         const googleUser = await googleVerify(googletoken);
         const {email, username, pp_path} = googleUser
@@ -77,7 +78,8 @@ const signInGoogle = async (req, res) =>{
         }
         
         const {id, role_id} = user;
-        const token = await generateJWT({id, username, role_id});
+        const token = await generateJWT({id, username, role_id, remember:!!remember}, 
+            remember? types.RESTRICTIONS.LONG_TOKEN_TIME: types.RESTRICTIONS.TOKEN_TIME);
 
         return res.status(200).json({
             msg:'success',
@@ -95,6 +97,7 @@ const siginFacebook = async (req, res) => {
     try{
 
         const {displayName:username, emails, photos} = req.user;
+        const {remember} = req.body;
     
         const pp_path = photos[0].value;
         const email = emails[0].value;
@@ -113,7 +116,8 @@ const siginFacebook = async (req, res) => {
         }
         
         const {id, role_id} = user;
-        const token = await generateJWT({id, username, role_id});
+        const token = await generateJWT({id, username, role_id, remember:!!remember}, 
+            remember? types.RESTRICTIONS.LONG_TOKEN_TIME: types.RESTRICTIONS.TOKEN_TIME);
     
         return res.status(200).json({
             msg:'success',
@@ -128,8 +132,12 @@ const siginFacebook = async (req, res) => {
 
 const checkTokenIntegrity = async (req, res) => {
     try{
-        const {id, username, role_id} = req.user;
-        const token = await generateJWT({id, username, role_id});
+        const {id, username, role_id, remember} = req.user;
+        const oldToken = req.oldToken;
+
+        const token = remember
+            ? oldToken
+            : await generateJWT({id, username, role_id}, types.RESTRICTIONS.TOKEN_TIME);
 
         return res.status(200).json({
             msg:'success',

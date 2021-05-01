@@ -26,6 +26,7 @@ router.post('/validateToken',[
 router.post('/login',[
     check('password').      custom(v => validateString(v, true, 0)),
     check('email').         custom((v)=>validateString(v, true, 0, 50, /[a-z0-9._%+-]+@[a-z0-9.-]+\.[a-z]{2,3}/)),
+    check('remember').      custom(v => validateBoolean(v, false)),
     validateFields
 ], loginInternal)
 
@@ -39,10 +40,15 @@ router.post('/signin',[
     validateFields,
 ], sigInInternal);
 
-router.post('/login/google', signInGoogle);
+router.post('/login/google',[
+    check('remember').      custom(v => validateBoolean(v, false)),
+    validateFields
+], signInGoogle);
 
 router.post('/login/facebook',[
-    passport.authenticate('facebook-token', {session:false})
+    passport.authenticate('facebook-token', {session:false}),
+    check('remember').      custom(v => validateBoolean(v, false)),
+    validateFields
 ], siginFacebook);
 
 module.exports = router;

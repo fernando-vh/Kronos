@@ -55,6 +55,7 @@ const searchSongs = async (term, limit, offset) => {
 const searchUsers = async (term, limit, offset) => {
     const {count, rows} = await User.scope('no_sensitive_email').findAndCountAll({
         where:{
+            archived:false,
             username:{
                 [Op.like]:`%${term}%`
             }

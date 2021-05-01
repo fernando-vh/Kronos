@@ -11,12 +11,12 @@ const { getUser,
     } = require("../controllers/user");
 
 const { validateString,
-        validateBoolean,
-        validateInteger
+        validateBoolean
     } = require("../helpers/validate-fields");
 
 const { validateRole,
-        userExists
+        userExists,
+        userExistsIncludeArchieve
     } = require("../helpers/validate-to-db");
     
 const { validateFields } = require("../middlewares/validate-fields");
@@ -29,6 +29,7 @@ router.get('/', [validateJWT], getUsers);
 router.get('/:id',[
     validateJWT,
     check('id').            custom(userExists),
+    validateFields
 ], getUser);
 
 router.put('/:id/basic',[
@@ -43,14 +44,14 @@ router.put('/:id/basic',[
 router.put('/:id/archive',[
     validateJWT,
     check('archived').      custom((v)=>validateBoolean(v, true)),
-    check('id').            custom((v)=>userExists(v, true)),
+    check('id').            custom(userExistsIncludeArchieve),
     validateFields,
 ], putArhieveUser);
 
 router.put('/:id/role',[
     validateJWT,
     check('role').          custom(validateRole),
-    check('id').            custom((v)=>userExists(v, true)),
+    check('id').            custom(userExistsIncludeArchieve),
     validateFields,
 ], putChangeRoleUser);
 

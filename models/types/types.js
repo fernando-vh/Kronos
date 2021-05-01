@@ -31,7 +31,9 @@ const types = {
         USERS:'users'
     },
     RESTRICTIONS:{
-        MAX_IMAGE_SIZE: 225
+        MAX_IMAGE_SIZE: 225,
+        TOKEN_TIME: "1h",
+        LONG_TOKEN_TIME:'15d'
     }
 }
 

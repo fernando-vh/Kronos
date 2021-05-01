@@ -15,7 +15,7 @@ const createNewSongHades = async (emotion) => {
         case types.EMOTION.TIRED:   folder = 'TIRED'; break;
     }
     
-    const testFolder = `C:/Users/HavyM/Music/Musica Varia/${folder}`;
+    const testFolder = `${process.env.LOCAL_SONGS_DIRNAME}/${folder}`;
 
     const files = fs.readdirSync(testFolder);
     const songs = files.filter(v => v.includes(".mp3"));

@@ -7,14 +7,15 @@ const validateJWT = async (req, res, next) => {
     
     try{
 
-        const {id, username, role_id} = jwt.verify(token.split(' ')[1], process.env.SECRET_TOKEN_KEY);
+        const {id, remember} = jwt.verify(token.split(' ')[1], process.env.SECRET_TOKEN_KEY);
         const user = await User.findByPk(id);
 
         if(!user || user.archived){
             return res.status(401).json();
         }
 
-        req.user = {id, username, role_id};
+        req.user = {id:user.id, username:user.username, role_id:user.role_id, remember};
+        req.oldToken = token.split(' ')[1];
 
         next();
 
