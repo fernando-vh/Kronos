@@ -17,3 +17,7 @@ No planned maintenance for future updates.
 5. Finally run the server with `npm start`.
 
 If you want to test the API, there is a file inside the INSOMNIA folder with an exported file from insomnia REST API.
+
+Uploaded files are saved in the following directories: 
+ * songs: _YOUR_DIRNAME/Documents/MMC/uploads/songs
+ * images: _YOUR_DIRNAME/Documents/MMC/uploads/images
