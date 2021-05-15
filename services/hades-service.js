@@ -18,7 +18,7 @@ const createNewSongHades = async (emotion) => {
     const testFolder = `${process.env.LOCAL_SONGS_DIRNAME}/${folder}`;
 
     const files = fs.readdirSync(testFolder);
-    const songs = files.filter(v => v.includes(".mp3"));
+    const songs = files.filter(v => v.includes(".wav"));
     const selectedSong = songs[randomInt(0, songs.length)];
     const songFile = fs.readFileSync(`${testFolder}/${selectedSong}`);
 

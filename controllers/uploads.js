@@ -56,7 +56,7 @@ const loadSong = async (req, res) => {
         const {emotionCode, title} = req.body;
 
         const resp = await createNewSongHades(emotionCode);
-        const {res:fileName} = await uploadBinFile(resp.data, 'mp3', types.FILE_DIRS.SONGS_DIRNAME);
+        const {res:fileName} = await uploadBinFile(resp.data, 'wav', types.FILE_DIRS.SONGS_DIRNAME);
         const {duration, size} = await extractMP3Data(types.FILE_DIRS.SONGS_DIRNAME+"/"+fileName);
 
         const t = title || 'Song ' + getRandomInt(10000000, 99999999);
@@ -97,7 +97,7 @@ const deleteSong = async (req, res) => {
         }
 
         song.destroy();
-        const songPath = types.FILE_DIRS.SONGS_DIRNAME+'/'+songId+'.mp3'; 
+        const songPath = types.FILE_DIRS.SONGS_DIRNAME+'/'+songId+'.wav'; 
 
         if(fs.existsSync(songPath)){
             fs.unlinkSync(songPath);
@@ -140,7 +140,7 @@ const getSongFile = async (req, res) => {
     try{
         const {id} = req.params;
 
-        const filePath = path.join(types.FILE_DIRS.SONGS_DIRNAME, id+".mp3");
+        const filePath = path.join(types.FILE_DIRS.SONGS_DIRNAME, id+".wav");
 
         return res.status(200).sendFile(filePath);
 
@@ -155,10 +155,10 @@ const copySong = async (req, res) => {
 
         const {id} = req.params;
 
-        const fileName = uuidv4() + '.mp3';
+        const fileName = uuidv4() + '.wav';
 
         fs.copyFileSync(
-            `${types.FILE_DIRS.SONGS_DIRNAME}/${id}.mp3`,
+            `${types.FILE_DIRS.SONGS_DIRNAME}/${id}.wav`,
             `${types.FILE_DIRS.SONGS_DIRNAME}/${fileName}`);
 
         const song = await Song.findByPk(id);
